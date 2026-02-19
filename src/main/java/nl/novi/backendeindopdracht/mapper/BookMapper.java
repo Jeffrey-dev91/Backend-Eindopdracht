@@ -40,8 +40,16 @@ public static BookOutputDto toBookOutputDto(Book book) {
 
 
     if (book.getGenre() != null) {
-        bookOutputDto.genreName = book.getGenre().getName();
+        bookOutputDto.setGenreName(book.getGenre().getName());
     }
+
+
+
+    if(book.getImagePath() != null) {
+        bookOutputDto.setImageUrl("/books" + book.getId() + "/image");
+
+    }
+
 
     return bookOutputDto;
 

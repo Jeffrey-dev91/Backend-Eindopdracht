@@ -15,6 +15,11 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
+@Column(nullable = true)
+private String imagePath;
+private String filePath;
+private String fileType;
+
 
     @Column(nullable = false)
     private String title;
@@ -25,10 +30,10 @@ public class Book {
     @Column(nullable = true)
     private String isbn;
 
-    @Column(name = "total_copies", nullable = false)
+    @Column(name = "totalcopies", nullable = false)
     private int totalCopies;
 
-    @Column(name = "available_copies", nullable = false)
+    @Column(name = "availablecopies", nullable = false)
     private int availableCopies;
 
 
@@ -102,6 +107,10 @@ public Book(String title, String author, String isbn, int totalCopies){
     }
 
 
+    public void setAvailableCopies(int availableCopies) {
+        this.availableCopies = availableCopies;
+    }
+
     public Genre getGenre() {
         return genre;
     }
@@ -121,13 +130,36 @@ public Book(String title, String author, String isbn, int totalCopies){
 
     }
 
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
     public void returnCopy(){
 
         if(availableCopies < totalCopies){
             this.availableCopies++;
         }
 
-
     }
 
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
+    }
 }

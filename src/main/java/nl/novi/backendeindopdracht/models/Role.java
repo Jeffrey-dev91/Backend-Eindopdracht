@@ -9,8 +9,6 @@ import java.util.List;
 
 @Entity
 @Table(name="roles")
-
-
 public class Role {
 
     @Id
@@ -22,6 +20,9 @@ public class Role {
 @ManyToMany(mappedBy = "roles")
     private List<User> users = new ArrayList<>();
 
+public Role() {}
+
+
 
     public String getRolename() {
         return rolename;
@@ -29,13 +30,5 @@ public class Role {
 
     public void setRolename(String rolename) {
         this.rolename = rolename;
-    }
-
-    public List<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
     }
 }

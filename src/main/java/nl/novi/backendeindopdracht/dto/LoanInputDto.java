@@ -7,7 +7,7 @@ public class LoanInputDto {
 
 
     public Long bookId;
-    public String userId;
+    public Long userId;
 public LocalDate loanDate;
 
 

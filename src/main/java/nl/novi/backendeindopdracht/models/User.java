@@ -14,40 +14,50 @@ import java.util.List;
 public class User {
 
   @Id
+
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
+
+
   @Column(length=128, nullable=false)
   private String username;
 
     @Column(length=128, nullable=false)
-  private String email;
+    private String password;
 
     @Column(length=128, nullable=false)
-  private String password;
+    private String email;
+
+
+
+
+    @ManyToMany(fetch=FetchType.EAGER)
+@JoinTable(name = "users_roles",
+joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "rolename")
+
+)
+
+    private List<Role> roles = new ArrayList<>();
+
+
+
+    @OneToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
+
 
 
     @OneToMany(mappedBy = "user")
     private List<Loan> loans = new ArrayList<>();
 
-@OneToOne(mappedBy = "user")
-private Profile profile;
 
 
-    @ManyToMany(fetch=FetchType.EAGER)
-@JoinTable(name = "users_roles",
-joinColumns = @JoinColumn(name = "username", referencedColumnName = "username"),
-        inverseJoinColumns = @JoinColumn(name = "rolename", referencedColumnName = "rolename")
-
-)
+public User(){}
 
 
-
-private List<Role> roles = new ArrayList<>();
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    public Long getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -58,6 +68,15 @@ private List<Role> roles = new ArrayList<>();
         this.username = username;
     }
 
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -66,12 +85,27 @@ private List<Role> roles = new ArrayList<>();
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+    public List<Loan> getLoans() {
+        return loans;
     }
 
 }

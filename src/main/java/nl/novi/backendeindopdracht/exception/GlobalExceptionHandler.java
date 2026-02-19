@@ -1,40 +1,93 @@
 package nl.novi.backendeindopdracht.exception;
 
 
-//
-//
-////aparte klasse/centrale klasse om alle exception op te vangen hier. De juiste http response genereert.
-//
-//
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.MethodArgumentNotValidException;
-//import org.springframework.web.bind.annotation.ControllerAdvice;
-//import org.springframework.web.bind.annotation.ExceptionHandler;
-//
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//
-////hashmap wordt gebruikt om foutmeldingen in een lijst te stoppen zoals dob en name.
-//@ControllerAdvice
-//public class GlobalExceptionHandler {
-//
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//        public ResponseEntity<Map< String, String>> handleValidationErrors(MethodArgumentNotValidException ex){
-//
-//        Map<String, String> errors = new HashMap<>();
-//
-//        ex.getBindingResult().getFieldErrors().forEach(e -> errors.put(e.getField(), e.getDefaultMessage()));
-//        return ResponseEntity.badRequest().body(errors);
-//    }
-//
-//    @ExceptionHandler(ResourceNotFoundException.class)
-//    public ResponseEntity<String> handleResourceNotFoundException(ResourceNotFoundException ex){
-//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-//    }
-//
-//
-//}
-//
-//
+
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiError> handleResourceNotFound(ResourceNotFoundException ex, WebRequest request) {
+
+        ApiError error = new ApiError(
+                HttpStatus.NOT_FOUND.value(),
+                "NOT FOUND",
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=",""),
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+
+    }
+
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiError> handleRunTimeException(RuntimeException ex, WebRequest request) {
+
+        ApiError error = new ApiError(
+
+
+        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "INTERNAL SERVER ERROR",
+        ex.getMessage(),
+        request.getDescription(false).replace("uri=",""),
+        LocalDateTime.now()
+                );
+
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiError> handleValidationException(MethodArgumentNotValidException ex, WebRequest request) {
+
+
+
+
+
+        String errorMessage = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(err -> err.getField()+ ":" + err.getDefaultMessage())
+                .collect(Collectors.joining(","));
+
+
+
+
+        ApiError error = new ApiError(
+
+                HttpStatus.BAD_REQUEST.value(),
+                "VALIDATION ERROR",
+                errorMessage,
+                request.getDescription(false).replace("uri=", ""),
+                LocalDateTime.now()
+
+        );
+
+        return ResponseEntity.badRequest().body(error);
+    }
+
+
+
+
+
+
+
+
+
+}
+
+

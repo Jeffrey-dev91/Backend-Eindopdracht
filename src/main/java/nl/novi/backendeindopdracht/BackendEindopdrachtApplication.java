@@ -3,6 +3,7 @@ package nl.novi.backendeindopdracht;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+
 @SpringBootApplication
 public class BackendEindopdrachtApplication {
 
