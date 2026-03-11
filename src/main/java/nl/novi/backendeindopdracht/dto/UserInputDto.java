@@ -9,32 +9,33 @@ import java.util.List;
 
 public class UserInputDto {
 
+
+
+
 @NotBlank(message = "Username is required")
 @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
-    private String username;
-
-
+    public String username;
 
 
     @NotBlank(message = "Password is required")
     @Size(min = 4, message =  "Password must be at least 4 characters")
-    private String password;
+    public String password;
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
-    private String email;
+    public String email;
 
 
 
-    private List<String> roles;
+    public List<String> roles;
 
 
     @NotBlank(message = "Firstname is required")
-    private String firstName;
+    public String firstName;
     @NotBlank(message = "Lastname is required")
-    private String lastName;
+    public String lastName;
     @NotBlank(message = "Address is required")
-    private String address;
+    public String address;
 
 
     public String getUsername() {

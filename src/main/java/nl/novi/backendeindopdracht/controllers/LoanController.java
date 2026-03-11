@@ -26,7 +26,7 @@ public class LoanController {
 
     public LoanController(LoanService loanService) {
     this.loanService = loanService;
-        ;
+
     }
 
 
@@ -63,6 +63,16 @@ public ResponseEntity <List <LoanOutputDto>> getAllLoans() {
         loanService.deleteLoan(id);
         return ResponseEntity.noContent().build();
  }
+
+
+@PatchMapping("/{id}")
+    public ResponseEntity <LoanOutputDto> updateLoan(@PathVariable Long id, @RequestBody LoanInputDto loan) {
+
+        LoanOutputDto updatedLoan = loanService.updateLoan(id, loan);
+        return ResponseEntity.ok(updatedLoan);
+
+
+}
 
 
 

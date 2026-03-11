@@ -4,6 +4,7 @@ package nl.novi.backendeindopdracht.service;
 import nl.novi.backendeindopdracht.dto.UserInputDto;
 import nl.novi.backendeindopdracht.dto.UserOutputDto;
 import nl.novi.backendeindopdracht.mapper.UserMapper;
+import nl.novi.backendeindopdracht.models.Profile;
 import nl.novi.backendeindopdracht.models.Role;
 import nl.novi.backendeindopdracht.models.User;
 import nl.novi.backendeindopdracht.repository.RoleRepository;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+
 
 
 @Service
@@ -85,7 +88,61 @@ user.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
 
 
 
+public User getUserEntityById(Long id){
+
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+}
 
 
+public UserOutputDto updateUser(Long id, UserInputDto userInputDto) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+
+if(userInputDto.username != null) {
+    user.setUsername(userInputDto.username);
+
+}
+    if(userInputDto.password != null) {
+        user.setPassword(passwordEncoder.encode(userInputDto.password));
+    }
+       if(userInputDto.email != null) {
+           user.setEmail(userInputDto.email);
+       }
+
+    Profile profile = user.getProfile();
+
+       if(profile != null) {
+           if(userInputDto.getFirstName() != null) {
+               profile.setFirstName(userInputDto.firstName);
+           }
+
+           if(userInputDto.getLastName() != null) {
+               profile.setLastName(userInputDto.lastName);
+           }
+           if(userInputDto.getAddress() != null) {
+               profile.setAddress(userInputDto.address);
+
+           }
+
+           }
+
+if(userInputDto.roles != null && !userInputDto.roles.isEmpty()) {
+    user.getRoles().clear();
+
+for (String roleName : userInputDto.roles) {
+    Role role = roleRepository.findById(roleName)
+            .orElseThrow(() -> new RuntimeException("Role not found" + roleName));
+
+user.addRole(role);
+}
+}
+        User savedUser = userRepository.save(user);
+        return UserMapper.toOutputDto(savedUser);
+
+}
 
 }

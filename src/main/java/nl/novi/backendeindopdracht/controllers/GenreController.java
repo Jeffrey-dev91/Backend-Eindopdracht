@@ -3,7 +3,7 @@ package nl.novi.backendeindopdracht.controllers;
 
 import nl.novi.backendeindopdracht.dto.GenreInputDto;
 import nl.novi.backendeindopdracht.dto.GenreOutputDto;
-import nl.novi.backendeindopdracht.models.Genre;
+
 
 import nl.novi.backendeindopdracht.service.GenreService;
 import org.springframework.http.HttpStatus;
@@ -18,58 +18,60 @@ import java.util.List;
 public class GenreController {
 
 
-
-private final GenreService genreService;
+    private final GenreService genreService;
 
 
     public GenreController(GenreService genreService) {
-    this.genreService = genreService;
+        this.genreService = genreService;
 
     }
 
 
-@PostMapping("/create")
-    public ResponseEntity <GenreOutputDto> createGenre(@RequestBody GenreInputDto genreInputDto) {
+    @PostMapping("/create")
+    public ResponseEntity<GenreOutputDto> createGenre(@RequestBody GenreInputDto genreInputDto) {
         GenreOutputDto createdGenre = genreService.createGenre(genreInputDto);
 
-    return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(createdGenre);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(createdGenre);
 
 
+    }
 
-}
-@GetMapping("/all")
-public ResponseEntity <List<GenreOutputDto>> getAllGenres(){
+    @GetMapping("/all")
+    public ResponseEntity<List<GenreOutputDto>> getAllGenres() {
 
         List<GenreOutputDto> genres = genreService.getAllGenres();
 
-    return ResponseEntity.ok(genres);
+        return ResponseEntity.ok(genres);
 
-}
+    }
 
-@GetMapping("/{id}")
-    public ResponseEntity <GenreOutputDto> getGenreById(@PathVariable Long id){
-
-
-    return ResponseEntity.ok(genreService.getGenreById(id));
-}
+    @GetMapping("/{id}")
+    public ResponseEntity<GenreOutputDto> getGenreById(@PathVariable Long id) {
 
 
+        return ResponseEntity.ok(genreService.getGenreById(id));
+    }
 
 
-
-@DeleteMapping("/{id}")
-    public ResponseEntity <GenreOutputDto> deleteGenreById(@PathVariable Long id){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteGenreById(@PathVariable Long id) {
 
         genreService.deleteGenre(id);
         return ResponseEntity.noContent().build();
 
 
+    }
+
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<GenreOutputDto> updateGenreById(@PathVariable Long id, @RequestBody GenreInputDto genreInputDto) {
+        GenreOutputDto updatedGenre = genreService.updateGenre(id, genreInputDto);
+        return ResponseEntity.ok(updatedGenre);
+
+    }
+
 }
 
-
-
-
-
-}

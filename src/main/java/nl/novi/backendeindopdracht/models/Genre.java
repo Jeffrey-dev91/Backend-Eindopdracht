@@ -1,9 +1,7 @@
 package nl.novi.backendeindopdracht.models;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,18 +17,17 @@ public class Genre {
 private long id;
 
 
-@Column(nullable = false, unique = true)
+@Column(unique = true)
 private String name;
 
 
 @OneToMany(mappedBy = "genre")
+
 @JsonIgnore
 private List<Book> books = new ArrayList<>();
 
 
 public Genre() {}
-
-
 
 
     public long getId() {

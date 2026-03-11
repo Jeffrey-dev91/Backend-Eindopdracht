@@ -4,8 +4,13 @@ package nl.novi.backendeindopdracht.mapper;
 import nl.novi.backendeindopdracht.dto.LoanInputDto;
 import nl.novi.backendeindopdracht.dto.LoanOutputDto;
 import nl.novi.backendeindopdracht.models.Loan;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+
+
+@Component("customLoanMapper")
+
 
 public class LoanMapper {
 
@@ -30,7 +35,7 @@ public static Loan toEntity (LoanInputDto loanInputDto) {
 }
 
 
-public static LoanOutputDto toLoanOutputDto (Loan loan) {
+public LoanOutputDto toLoanOutputDto (Loan loan) {
 
 LoanOutputDto loanOutputDto = new LoanOutputDto();
 

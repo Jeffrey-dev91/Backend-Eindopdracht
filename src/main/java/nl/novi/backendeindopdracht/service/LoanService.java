@@ -20,17 +20,21 @@ public class LoanService {
     private final LoanRepository loanRepository;
     private final BookRepository bookRepository;
 private final UserRepository userRepository;
+private final LoanMapper loanMapper;
+private final BookService bookService;
+private final UserService userService;
 
 
 
 
-
-public LoanService(LoanRepository loanRepository, BookRepository bookRepository, UserRepository userRepository) {
+public LoanService(LoanRepository loanRepository, BookRepository bookRepository, UserRepository userRepository, LoanMapper loanMapper, BookService bookService, UserService userService) {
 
     this.loanRepository = loanRepository;
     this.bookRepository = bookRepository;
     this.userRepository = userRepository;
-
+    this.loanMapper = loanMapper;
+this.bookService = bookService;
+this.userService = userService;
 }
 
 
@@ -61,14 +65,14 @@ public LoanOutputDto createLoan(LoanInputDto loanInputDto) {
 
     Loan savedLoan = loanRepository.save(loan);
 
-    return LoanMapper.toLoanOutputDto(savedLoan);
+    return loanMapper.toLoanOutputDto(savedLoan);
 }
 
     public List<LoanOutputDto> getAllLoans() {
 
         return loanRepository.findAll()
                 .stream()
-                .map(LoanMapper::toLoanOutputDto)
+                .map(loanMapper::toLoanOutputDto)
                 .toList();
     }
 
@@ -76,7 +80,7 @@ public LoanOutputDto createLoan(LoanInputDto loanInputDto) {
     public LoanOutputDto getLoan(Long id) {
         Loan loan = loanRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Loan not found"));
-        return LoanMapper.toLoanOutputDto(loan);
+        return loanMapper.toLoanOutputDto(loan);
     }
 
 
@@ -91,6 +95,43 @@ public LoanOutputDto createLoan(LoanInputDto loanInputDto) {
 
         loanRepository.deleteById(id);
     }
+
+
+    public LoanOutputDto updateLoan(Long id, LoanInputDto loanInputDto) {
+
+
+    Loan loan = loanRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+
+
+if(loanInputDto.userId!= null) {
+    User user = userService.getUserEntityById(loanInputDto.userId);
+    loan.setUser(user);
+}
+
+    if(loanInputDto.bookId!= null) {
+        Book book = bookService.getBookEntity(loanInputDto.bookId);
+        loan.setBook(book);
+    }
+
+
+    if(loanInputDto.loanDate!= null) {
+        loan.setLoanDate(loanInputDto.loanDate);
+    }
+
+
+    if(loanInputDto.returnDate!= null) {
+        loan.setReturnDate(loanInputDto.returnDate);
+    }
+
+
+    Loan savedLoan = loanRepository.save(loan);
+    return loanMapper.toLoanOutputDto(savedLoan);
+
+    }
+
+
 }
 
 

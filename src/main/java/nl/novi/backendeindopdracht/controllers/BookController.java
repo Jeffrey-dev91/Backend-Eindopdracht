@@ -39,6 +39,7 @@ private final BookService bookService;
 
     public ResponseEntity<BookOutputDto> createBook(@Valid @RequestBody BookInputDto bookInputDto) {
 
+
         BookOutputDto createdBook = bookService.createBook(bookInputDto);
 
         URI uri = ServletUriComponentsBuilder
@@ -62,6 +63,7 @@ private final BookService bookService;
  return ResponseEntity.ok(books);
 
     }
+
 
 
     @GetMapping("/{id}")
@@ -106,6 +108,19 @@ public ResponseEntity<Resource> getBookFile(@PathVariable Long id) throws IOExce
             .contentType(MediaType.parseMediaType(contentType))
             .body(resource);
 }
+
+
+
+
+    @PatchMapping("/{id}")
+    public ResponseEntity <BookOutputDto> updateBook(@PathVariable long id, @RequestBody BookInputDto bookInputDto) {
+
+        BookOutputDto updatedBook = bookService.updateBook(id,bookInputDto);
+        return ResponseEntity.ok(updatedBook);
+
+
+
+    }
 
 
 }

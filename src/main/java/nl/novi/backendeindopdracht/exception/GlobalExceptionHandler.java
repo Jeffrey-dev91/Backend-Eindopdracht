@@ -82,9 +82,12 @@ public class GlobalExceptionHandler {
 
 
 
+@ExceptionHandler(value = BadRequestException.class)
+    public ResponseEntity<Object> exception (BadRequestException ex ) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
 
 
-
+}
 
 
 

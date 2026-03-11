@@ -31,8 +31,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtUtil jwtUtil, UserDetailsService userDetailsService) throws Exception {
 
-http
-        .csrf(csrf -> csrf.disable())
+http.csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/login").permitAll()
 
@@ -46,10 +45,13 @@ http
                 .hasAnyRole("ADMIN","EMPLOYEE")
 
                 .requestMatchers(HttpMethod.DELETE, "/books/**")
-                .hasRole("ADMIN")
+                .hasAnyRole("ADMIN")
+
+                        .requestMatchers("/genres/**")
+                        .hasAnyRole("ADMIN","EMPLOYEE")
 
                 .requestMatchers("/loans/**").hasAnyRole("ADMIN","EMPLOYEE")
-                .requestMatchers("/users/**").hasRole("ADMIN")
+                .requestMatchers("/users/**").hasAnyRole("ADMIN")
                 .anyRequest().authenticated()
         )
         .

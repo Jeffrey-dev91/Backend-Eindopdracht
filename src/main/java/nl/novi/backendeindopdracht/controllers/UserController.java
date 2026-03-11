@@ -3,6 +3,7 @@ package nl.novi.backendeindopdracht.controllers;
 import jakarta.validation.Valid;
 import nl.novi.backendeindopdracht.dto.UserInputDto;
 import nl.novi.backendeindopdracht.dto.UserOutputDto;
+import nl.novi.backendeindopdracht.exception.BadRequestException;
 import nl.novi.backendeindopdracht.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +28,11 @@ public class UserController {
 
 
 @PostMapping("/create")
-    public ResponseEntity<UserOutputDto> createUser(@Valid @RequestBody UserInputDto userInputDto) {
+    public ResponseEntity<UserOutputDto> createUser( @RequestBody(required = false) UserInputDto userInputDto) {
+if(userInputDto == null) {
 
+    throw new BadRequestException("Request body mag niet leeg zijn!");
+}
 
         UserOutputDto createdUser = userService.createUser(userInputDto);
 
@@ -84,6 +88,16 @@ public ResponseEntity<List<UserOutputDto>> getAllUsers() {
 
 
 }
+
+
+@PatchMapping("/{id}")
+    public ResponseEntity<UserOutputDto> updateUser(@PathVariable Long id, @RequestBody UserInputDto userInputDto) {
+
+        UserOutputDto outputDto = userService.updateUser(id, userInputDto);
+        return ResponseEntity.ok(outputDto);
+
+}
+
 
 
 

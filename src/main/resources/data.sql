@@ -1,24 +1,22 @@
 
 
 
-insert into roles (rolename) values ('ROLE_ADMIN');
-insert into roles(rolename)values('ROLE_USER');
-insert into roles(rolename)values('ROLE_EMPLOYEE');
+insert into roles (rolename) values ('ADMIN');
+insert into roles(rolename)values('EMPLOYEE');
+insert into roles(rolename)values('USER');
+
+
 
 
 INSERT INTO users (username, email, password) values
- ('admin',' admin@hotmail.com','$2a$12$7JY6VuymRjdxiMQf7dxEGe9xH99iFWWjkY6XewlfqxaI9/8iUo496'),
-('user','user@hotmail.com', '$2a$12$jBe4S4EQFbFummeBVl97meeVHM7VgsgnT.KOcZ3bAEV4tNcLK5FGO'),
-('employee','employee@hotmail.com','$2a$12$FK.ZdT27HTPxllTWDuBo5efggfA3OH9t61xeZRyE67nf.togM9CWS');
+ ('jeffrey','jeffrey@hotmail.com','$2a$12$Y/AeHoz.At8DyMgkYwMxj.yV0lWtkIblg4uPb5D.A987VrBHYlRUS'),
+ ('jasper','jasper@hotmail.com','$2a$12$Lu8cvyKVqu10ggrUKrvpneAzq59anRfxCRZidd.UoIK7.eAgrb.iO'),
+('kevin','kevin@hotmail.com', '$2a$12$Il2y3Nri9GO07CK0665sGOmKyNjzLdchpNSSyscxAQTHXReQTISQ6');
+
+
 
 insert into users_roles(user_id, rolename)values
-    (1,'ROLE_ADMIN'),
-    (2,'ROLE_USER'),
-    (3,'ROLE_EMPLOYEE');
+    (1,'ADMIN'),
+    (2,'EMPLOYEE'),
+    (3,'USER');
 
-insert into books (id, title,author, isbn, totalcopies,availablecopies) values
-            (1, 'Spring in Action','JWK', 12345,5,10);
-
-
-insert into loans(id, book_id, user_id, loandate, duedate, returned) values
-        (1,1,1,'2026-02-19','2026-03-01',false);

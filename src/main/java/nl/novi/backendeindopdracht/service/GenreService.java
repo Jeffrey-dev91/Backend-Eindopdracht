@@ -3,8 +3,11 @@ package nl.novi.backendeindopdracht.service;
 
 import nl.novi.backendeindopdracht.dto.GenreInputDto;
 import nl.novi.backendeindopdracht.dto.GenreOutputDto;
+import nl.novi.backendeindopdracht.exception.BadRequestException;
+import nl.novi.backendeindopdracht.exception.ResourceNotFoundException;
 import nl.novi.backendeindopdracht.mapper.GenreMapper;
 import nl.novi.backendeindopdracht.models.Genre;
+import nl.novi.backendeindopdracht.repository.BookRepository;
 import nl.novi.backendeindopdracht.repository.GenreRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +19,12 @@ public class GenreService {
 
 
     private final GenreRepository genreRepository;
+    private final BookRepository bookRepository;
 
-
-    public GenreService(GenreRepository genreRepository) {
+    public GenreService(GenreRepository genreRepository, BookRepository bookRepository) {
 
         this.genreRepository = genreRepository;
-
+        this.bookRepository = bookRepository;
     }
 
     public GenreOutputDto createGenre(GenreInputDto genreInputDto) {
@@ -36,6 +39,7 @@ public class GenreService {
         Genre genre = GenreMapper.toEntity(genreInputDto);
 
         Genre savedGenre = genreRepository.save(genre);
+
         return GenreMapper.toDto(savedGenre);
 
     }
@@ -55,6 +59,7 @@ public class GenreService {
 
         Genre genre = genreRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("Genre not found"));
+
         return GenreMapper.toDto(genre);
 
     }
@@ -67,10 +72,13 @@ public class GenreService {
         Genre genre = genreRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Genre not found"));
 
-        genre.setName(genreInputDto.name);
 
-        Genre updatedGenre = genreRepository.save(genre);
-        return GenreMapper.toDto(updatedGenre);
+        if (genreInputDto.name!= null) {
+            genre.setName(genreInputDto.name);
+        }
+
+        Genre savedGenre = genreRepository.save(genre);
+        return GenreMapper.toDto(savedGenre);
 
 
     }
@@ -78,13 +86,41 @@ public class GenreService {
 
     public void deleteGenre(Long id) {
 
-      if(genreRepository.existsById(id)) {
-          throw new RuntimeException("Genre not found ");
-      }
+
+Genre genre = genreRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Genre not found"));
 
 
-      genreRepository.deleteById(id);
+
+     if(bookRepository.existsByGenreId(id)) {
+         throw new BadRequestException("Kan genre niet verwijderen: er zijn nog boeken aan gekoppeld!!");
+
+
+     }
+
+      genreRepository.delete(genre);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public Genre getGenreEntityById(Long id) {
+
+
+        return genreRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Genre niet gevonden bij Id"));
 
     }
+
+
+
+
 
 }

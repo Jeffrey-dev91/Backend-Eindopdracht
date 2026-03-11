@@ -1,12 +1,12 @@
 package nl.novi.backendeindopdracht.controllers;
 
-
 import nl.novi.backendeindopdracht.dto.LoginRequest;
 import nl.novi.backendeindopdracht.security.JwtUtil;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +36,7 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public String login (@RequestBody LoginRequest loginRequest){
+    public String login (@RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -45,16 +45,19 @@ public class AuthController {
                 )
         );
 
+        UserDetails userDetails =
+                (UserDetails) authentication.getPrincipal();
 
         List<String> roles = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
+                .filter(role -> role.startsWith("ROLE_"))
                 .toList();
 
+
+
+        String token = jwtUtil.generateToken(userDetails.getUsername(), roles);
         return jwtUtil.generateToken(authentication.getName(), roles);
-
-
     }
-
 
 }

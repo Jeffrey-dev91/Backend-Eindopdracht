@@ -2,6 +2,8 @@ package nl.novi.backendeindopdracht.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,25 +17,27 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
-@Column(nullable = true)
+//@Column(nullable = true)
 private String imagePath;
 private String filePath;
 private String fileType;
 
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String author;
 
-    @Column(nullable = true)
+//    @Column(nullable = true)
     private String isbn;
 
-    @Column(name = "totalcopies", nullable = false)
+//    @NotNull(message = "Total Copies is required")
+    @Column(name = "totalcopies")
     private int totalCopies;
 
-    @Column(name = "availablecopies", nullable = false)
+//    @NotNull(message = "Available Copies is required")
+    @Column(name = "availablecopies")
     private int availableCopies;
 
 

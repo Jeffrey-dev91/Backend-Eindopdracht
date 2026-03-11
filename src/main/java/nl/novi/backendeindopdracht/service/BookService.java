@@ -26,13 +26,15 @@ public class BookService {
 
 private final BookRepository bookRepository;
 private final GenreRepository genreRepository;
+private final GenreService genreService;
 
    private final Path uploadDir = Paths.get("uploads/books");
 
-public BookService(BookRepository bookRepository, GenreRepository genreRepository) throws IOException {
+public BookService(BookRepository bookRepository, GenreRepository genreRepository, GenreService genreService) throws IOException {
 
     this.bookRepository = bookRepository;
     this.genreRepository = genreRepository;
+    this.genreService = genreService;
 
     if(!Files.exists(uploadDir)) {
         Files.createDirectories(uploadDir);
@@ -49,15 +51,25 @@ public BookOutputDto createBook(BookInputDto bookInputDto) {
 
     Book book = BookMapper.toEntity(bookInputDto);
     book.setGenre(genre);
-    return BookMapper.toBookOutputDto(bookRepository.save(book));
+
+    System.out.println("titel die ik ga opslaan: " + book.getTitle());
+
+    Book savedBook = bookRepository.save(book);
+    return BookMapper.toBookOutputDto(savedBook);
 
 
 }
 
 
     public List<BookOutputDto> getAllBooks() {
-        return bookRepository.findAll()
-                .stream()
+        List<Book> books = bookRepository.findAll();
+
+
+                if(books.isEmpty()){
+                    throw new ResourceNotFoundException("No books found in the database");
+                }
+
+                return books.stream()
                 .map(BookMapper::toBookOutputDto)
                 .toList();
     }
@@ -72,8 +84,8 @@ public BookOutputDto getBook(Long id) {
 
 public void deleteBook(Long id) {
 
-    if(bookRepository.existsById(id)) {
-        throw new ResourceNotFoundException("Book not found ");
+    if(!bookRepository.existsById(id)) {
+        throw new ResourceNotFoundException("Book is not deleted ");
     }
 
     bookRepository.deleteById(id);
@@ -92,7 +104,7 @@ public Book getBookEntity(Long id){
     public void uploadBookFile(Long id, MultipartFile file) throws IOException {
         Book book = getBookEntity(id);
 
-        if (file.isEmpty()) {
+        if (!file.isEmpty()) {
             throw new RuntimeException("File is empty");
         }
 
@@ -121,5 +133,56 @@ public Book getBookEntity(Long id){
         return filePath;
     }
 
+
+
+    public BookOutputDto updateBook(Long id, BookInputDto bookInputDto) {
+
+
+    Book book = bookRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Book not found " + id));
+
+
+
+        if(bookInputDto.title!= null){
+        book.setTitle(bookInputDto.title);
+
+        }
+
+        if (bookInputDto.author!= null) {
+            book.setAuthor(bookInputDto.author);
+        }
+
+        if (bookInputDto.isbn!= null) {
+            book.setIsbn(bookInputDto.isbn);
+
+        }
+        if (bookInputDto.totalCopies!= 0) {
+            book.setTotalCopies(bookInputDto.totalCopies);
+        }
+
+        if (bookInputDto.genreId!= 0) {
+            Genre genre = genreService.getGenreEntityById(bookInputDto.genreId);
+
+            book.setGenre(genre);
+        }
+
+            Book savedBook = bookRepository.save(book);
+
+
+
+BookOutputDto bookOutputDto = new BookOutputDto();
+bookOutputDto.setId(savedBook.getId());
+bookOutputDto.setTitle(savedBook.getTitle());
+bookOutputDto.setAuthor(savedBook.getAuthor());
+bookOutputDto.setIsbn(savedBook.getIsbn());
+
+if(savedBook.getGenre() != null){
+    bookOutputDto.setGenreName(savedBook.getGenre().getName());
+}
+
+
+return bookOutputDto;
+
+    }
 
 }
