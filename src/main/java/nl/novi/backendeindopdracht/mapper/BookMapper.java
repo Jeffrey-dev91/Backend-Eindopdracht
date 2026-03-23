@@ -22,6 +22,8 @@ public static Book toEntity(BookInputDto bookInputDto) {
     book.setAuthor(bookInputDto.author);
     book.setIsbn(bookInputDto.isbn);
     book.setTotalCopies(bookInputDto.totalCopies);
+    book.setAvailableCopies(bookInputDto.totalCopies);
+
     return book;
 
 }

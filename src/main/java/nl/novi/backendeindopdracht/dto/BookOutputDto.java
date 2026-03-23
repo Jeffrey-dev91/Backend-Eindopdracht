@@ -7,7 +7,7 @@ package nl.novi.backendeindopdracht.dto;
 public class BookOutputDto {
 
 
-    public long id;
+    public Long id;
     public String title;
     public String author;
     public String isbn;
@@ -23,7 +23,7 @@ private String imageUrl;
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

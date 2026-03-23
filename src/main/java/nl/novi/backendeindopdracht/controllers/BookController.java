@@ -67,7 +67,7 @@ private final BookService bookService;
 
 
     @GetMapping("/{id}")
-public ResponseEntity <BookOutputDto> getBookById(@PathVariable long id) {
+public ResponseEntity <BookOutputDto> getBookById(@PathVariable Long id) {
 
         return ResponseEntity.ok(bookService.getBook(id));
 
@@ -75,7 +75,7 @@ public ResponseEntity <BookOutputDto> getBookById(@PathVariable long id) {
 
 
 @DeleteMapping("/{id}")
-    public ResponseEntity <Void> deleteBook(@PathVariable long id) {
+    public ResponseEntity <Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
 }
@@ -113,15 +113,12 @@ public ResponseEntity<Resource> getBookFile(@PathVariable Long id) throws IOExce
 
 
     @PatchMapping("/{id}")
-    public ResponseEntity <BookOutputDto> updateBook(@PathVariable long id, @RequestBody BookInputDto bookInputDto) {
+    public ResponseEntity <BookOutputDto> updateBook(@PathVariable Long id, @RequestBody BookInputDto bookInputDto) {
 
         BookOutputDto updatedBook = bookService.updateBook(id,bookInputDto);
         return ResponseEntity.ok(updatedBook);
 
-
-
     }
-
 
 }
 

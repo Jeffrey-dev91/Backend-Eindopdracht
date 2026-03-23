@@ -63,6 +63,12 @@ public LoanOutputDto createLoan(LoanInputDto loanInputDto) {
     loan.setBook(book);
     loan.setUser(user);
 
+    if(loan.getReturnDate() == null) {
+        loan.setReturnDate(loan.getLoanDate().plusWeeks(3));
+    }
+
+
+
     Loan savedLoan = loanRepository.save(loan);
 
     return loanMapper.toLoanOutputDto(savedLoan);
@@ -128,6 +134,32 @@ if(loanInputDto.userId!= null) {
 
     Loan savedLoan = loanRepository.save(loan);
     return loanMapper.toLoanOutputDto(savedLoan);
+
+    }
+
+
+
+    public LoanOutputDto returnLoan(Long id) {
+
+    Loan loan = loanRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Loan not found"));
+
+    if(!loan.isReturned()){
+        loan.setReturned(true);
+
+
+        Book book = loan.getBook();
+        if(book!=null){
+            book.returnCopy();
+            bookRepository.save(book);
+        }
+
+        loan = loanRepository.save(loan);
+
+    }
+
+    return loanMapper.toLoanOutputDto(loan);
+
 
     }
 

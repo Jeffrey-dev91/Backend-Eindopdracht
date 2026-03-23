@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
-
+@EnableWebSecurity
 @Configuration
 public class SecurityConfig {
 
@@ -35,13 +36,22 @@ http.csrf(csrf -> csrf.disable())
         .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/login").permitAll()
 
+
+
+                .requestMatchers(HttpMethod.GET, "/users/*/profile").hasAnyRole("ADMIN", "USER")
+                .requestMatchers(HttpMethod.PUT, "/users/*/profile").hasAnyRole("ADMIN", "USER")
+                .requestMatchers(HttpMethod.DELETE, "/users/*/profile").hasAnyRole("ADMIN", "USER")
+
+                .requestMatchers("/users/**").hasAnyRole("ADMIN")
+
+
                 .requestMatchers(HttpMethod.GET, "/books/**")
                 .hasAnyRole("ADMIN","EMPLOYEE","USER")
 
                 .requestMatchers(HttpMethod.POST, "/books/**")
                 .hasAnyRole("ADMIN","EMPLOYEE")
 
-                .requestMatchers(HttpMethod.PUT, "/books/**")
+                .requestMatchers(HttpMethod.PATCH, "/books/**")
                 .hasAnyRole("ADMIN","EMPLOYEE")
 
                 .requestMatchers(HttpMethod.DELETE, "/books/**")
@@ -51,7 +61,7 @@ http.csrf(csrf -> csrf.disable())
                         .hasAnyRole("ADMIN","EMPLOYEE")
 
                 .requestMatchers("/loans/**").hasAnyRole("ADMIN","EMPLOYEE")
-                .requestMatchers("/users/**").hasAnyRole("ADMIN")
+
                 .anyRequest().authenticated()
         )
         .

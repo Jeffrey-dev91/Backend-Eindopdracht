@@ -52,7 +52,7 @@ public BookOutputDto createBook(BookInputDto bookInputDto) {
     Book book = BookMapper.toEntity(bookInputDto);
     book.setGenre(genre);
 
-    System.out.println("titel die ik ga opslaan: " + book.getTitle());
+
 
     Book savedBook = bookRepository.save(book);
     return BookMapper.toBookOutputDto(savedBook);
@@ -160,6 +160,7 @@ public Book getBookEntity(Long id){
             book.setTotalCopies(bookInputDto.totalCopies);
         }
 
+
         if (bookInputDto.genreId!= 0) {
             Genre genre = genreService.getGenreEntityById(bookInputDto.genreId);
 
@@ -175,6 +176,8 @@ bookOutputDto.setId(savedBook.getId());
 bookOutputDto.setTitle(savedBook.getTitle());
 bookOutputDto.setAuthor(savedBook.getAuthor());
 bookOutputDto.setIsbn(savedBook.getIsbn());
+bookOutputDto.setTotalCopies(savedBook.getTotalCopies());
+bookOutputDto.setAvailableCopies(savedBook.getAvailableCopies());
 
 if(savedBook.getGenre() != null){
     bookOutputDto.setGenreName(savedBook.getGenre().getName());

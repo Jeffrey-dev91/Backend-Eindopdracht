@@ -75,5 +75,12 @@ public ResponseEntity <List <LoanOutputDto>> getAllLoans() {
 }
 
 
+@PatchMapping("/{id}/return")
+    public ResponseEntity <LoanOutputDto> returnLoan(@PathVariable Long id) {
+
+
+        LoanOutputDto result = loanService.returnLoan(id);
+        return ResponseEntity.ok(result);
+}
 
 }

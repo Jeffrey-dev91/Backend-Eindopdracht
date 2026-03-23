@@ -1,6 +1,8 @@
 package nl.novi.backendeindopdracht.controllers;
 
-import jakarta.validation.Valid;
+
+import nl.novi.backendeindopdracht.dto.ProfileInputDto;
+import nl.novi.backendeindopdracht.dto.ProfileOutputDto;
 import nl.novi.backendeindopdracht.dto.UserInputDto;
 import nl.novi.backendeindopdracht.dto.UserOutputDto;
 import nl.novi.backendeindopdracht.exception.BadRequestException;
@@ -77,7 +79,6 @@ public ResponseEntity<List<UserOutputDto>> getAllUsers() {
 }
 
 
-
 @DeleteMapping("/{id}")
 
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
@@ -100,6 +101,31 @@ public ResponseEntity<List<UserOutputDto>> getAllUsers() {
 
 
 
+@PutMapping("/{id}/profile")
+    public ResponseEntity<ProfileOutputDto> updateUserProfile(@PathVariable Long id , @RequestBody ProfileInputDto profileInputDto) {
+
+
+        ProfileOutputDto result = userService.assignProfile(id, profileInputDto);
+        return ResponseEntity.ok(result);
+
+
+}
+
+
+@GetMapping("/{id}/profile")
+    public ResponseEntity<ProfileOutputDto> getProfile(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getProfile(id));
+    }
+
+
+
+    @DeleteMapping("/{id}/profile")
+    public ResponseEntity<Void> deleteProfile(@PathVariable Long id) {
+        userService.deleteUserProfile(id);
+        return ResponseEntity.noContent().build();
+
+
+    }
 
 
 }

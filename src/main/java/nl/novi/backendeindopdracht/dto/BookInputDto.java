@@ -11,7 +11,6 @@ public class BookInputDto {
 
 
 
-
 //@NotBlank(message = "Title is required")
 public String title;
 
@@ -26,6 +25,6 @@ public String isbn;
 public int totalCopies;
 
 
-public long genreId;
+public Long genreId;
 
 }
