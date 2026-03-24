@@ -5,25 +5,42 @@ import nl.novi.backendeindopdracht.repository.BookRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 
 import org.springframework.http.MediaType;
 
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.ResultMatcher;
 
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.get;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
+
+
+
+
 @ActiveProfiles("test")
-@AutoConfigureMockMvc
-@SpringBootApplication
+@AutoConfigureMockMvc(addFilters = false)
+@SpringBootTest
+
+@TestPropertySource(properties ={
+    "spring.datasource.url=jdbc:h2:mem:testdb",
+            "spring.datasource.driverClassName=org.h2.Driver",
+            "spring.datasource.username=sa",
+            "spring.datasource.password=",
+            "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
+            "spring.jpa.hibernate.ddl-auto=create-drop"
+            })
+
+
+
 
 class BookControllerTest {
 

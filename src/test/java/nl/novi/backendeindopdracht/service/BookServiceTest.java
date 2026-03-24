@@ -41,7 +41,7 @@ class BookServiceTest {
     @BeforeEach
     void setUp() {
         book = new Book();
-        book.setTitle("Title");
+        book.setTitle("Harry Potter");
         book.setAuthor("Author");
         book.setIsbn("123");
         book.setTotalCopies(5);
@@ -59,8 +59,8 @@ class BookServiceTest {
 
         BookOutputDto dto = bookService.getBook(1L);
 
-        assertEquals("Test Book", dto.getTitle());
-        assertEquals("Test Author", dto.getAuthor());
+        assertEquals("Harry Potter", dto.getTitle());
+        assertEquals("Author", dto.getAuthor());
 
     }
 
@@ -78,26 +78,6 @@ class BookServiceTest {
 
 
 
-//@Test
-//    void uploadBookFile_savesFilePath() throws IOException {
-//
-//
-//
-//        MockMultipartFile file =
-//                new MockMultipartFile("file", "test.jpg",
-//                        "image/jpg", "img".getBytes());
-//
-//
-//        when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-//
-//        bookService.uploadBookFile(1L,file);
-//
-//
-//        verify(bookRepository).save(book);
-//        assertNotNull(book.getFilePath());
-//
-//
-//}
 
 
 @Test

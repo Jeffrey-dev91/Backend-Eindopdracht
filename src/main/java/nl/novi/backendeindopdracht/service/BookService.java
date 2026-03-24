@@ -104,7 +104,7 @@ public Book getBookEntity(Long id){
     public void uploadBookFile(Long id, MultipartFile file) throws IOException {
         Book book = getBookEntity(id);
 
-        if (!file.isEmpty()) {
+        if (file.isEmpty()) {
             throw new RuntimeException("File is empty");
         }
 
