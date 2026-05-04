@@ -4,9 +4,7 @@ package nl.novi.backendeindopdracht.controllers;
 import jakarta.validation.Valid;
 import nl.novi.backendeindopdracht.dto.BookInputDto;
 import nl.novi.backendeindopdracht.dto.BookOutputDto;
-
 import nl.novi.backendeindopdracht.service.BookService;
-
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,34 +27,26 @@ private final BookService bookService;
 
 
     public BookController(BookService bookService) {
-
         this.bookService = bookService;
-
     }
 
 
-    @PostMapping("/create")
-
+    @PostMapping
     public ResponseEntity<BookOutputDto> createBook(@Valid @RequestBody BookInputDto bookInputDto) {
-
-
         BookOutputDto createdBook = bookService.createBook(bookInputDto);
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("{id}")
+                .path("/{id}")
                 .buildAndExpand(createdBook.getId())
                 .toUri();
 
         return ResponseEntity
                 .created(uri)
                 .body(createdBook);
-
     }
 
-
-    @GetMapping("/all")
-
+    @GetMapping
     public ResponseEntity <List<BookOutputDto>>getAllBooks() {
 
         List<BookOutputDto> books = bookService.getAllBooks();
@@ -65,12 +55,10 @@ private final BookService bookService;
     }
 
 
-
     @GetMapping("/{id}")
 public ResponseEntity <BookOutputDto> getBookById(@PathVariable Long id) {
 
         return ResponseEntity.ok(bookService.getBook(id));
-
     }
 
 
@@ -81,24 +69,17 @@ public ResponseEntity <BookOutputDto> getBookById(@PathVariable Long id) {
 }
 
 
-
-
-@PostMapping("/{id}/upload")
-    public ResponseEntity<String> uploadBookFile(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
-
-
+@PostMapping("/{id}/file")
+public ResponseEntity<String> uploadBookFile(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
         bookService.uploadBookFile(id,file);
-return ResponseEntity.ok("file uploaden successfully" + file.getOriginalFilename());
+return ResponseEntity.ok("file uploaded successfully" + file.getOriginalFilename());
+    }
 
-
-}
 
 @GetMapping("/{id}/file")
-
 public ResponseEntity<Resource> getBookFile(@PathVariable Long id) throws IOException {
     Path filePath = bookService.getBookImagePath(id);
     Resource resource = new org.springframework.core.io.UrlResource(filePath.toUri());
-
 
     String contentType = Files.probeContentType(filePath);
     if (contentType == null) contentType = "application/octet-stream";
@@ -110,11 +91,8 @@ public ResponseEntity<Resource> getBookFile(@PathVariable Long id) throws IOExce
 }
 
 
-
-
     @PatchMapping("/{id}")
     public ResponseEntity <BookOutputDto> updateBook(@PathVariable Long id, @RequestBody BookInputDto bookInputDto) {
-
         BookOutputDto updatedBook = bookService.updateBook(id,bookInputDto);
         return ResponseEntity.ok(updatedBook);
 

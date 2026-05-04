@@ -11,19 +11,18 @@ public class BookInputDto {
 
 
 
-//@NotBlank(message = "Title is required")
+@NotBlank(message = "Title is required")
 public String title;
 
-//@NotBlank(message = "Author is required")
+@NotBlank(message = "Author is required")
 public String author;
-//
-//@NotBlank(message = "ISBN is required")
+
+@NotBlank(message = "ISBN is required")
 public String isbn;
 
-//@NotNull(message = "Total Copies is required")
-//@Min(value = 1, message = "Total Copies must be at least 1")
+@NotNull(message = "Total Copies is required")
+@Min(value = 1, message = "Total Copies must be at least 1")
 public int totalCopies;
-
 
 public Long genreId;
 

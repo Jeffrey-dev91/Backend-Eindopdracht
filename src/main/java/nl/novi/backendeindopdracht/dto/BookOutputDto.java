@@ -2,10 +2,7 @@ package nl.novi.backendeindopdracht.dto;
 
 
 
-
-
 public class BookOutputDto {
-
 
     public Long id;
     public String title;
@@ -15,7 +12,6 @@ public class BookOutputDto {
     public int availableCopies;
     public String genreName;
 private String imageUrl;
-
 
 
 
@@ -82,6 +78,5 @@ private String imageUrl;
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-
 
 }
