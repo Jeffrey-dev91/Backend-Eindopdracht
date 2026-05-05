@@ -1,22 +1,21 @@
 package nl.novi.backendeindopdracht.controllers;
 
-
+import jakarta.validation.Valid;
 import nl.novi.backendeindopdracht.dto.GenreInputDto;
 import nl.novi.backendeindopdracht.dto.GenreOutputDto;
-
-
 import nl.novi.backendeindopdracht.service.GenreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/genres")
-public class GenreController {
 
+public class GenreController {
 
     private final GenreService genreService;
 
@@ -26,31 +25,31 @@ public class GenreController {
 
     }
 
-
-    @PostMapping("/create")
-    public ResponseEntity<GenreOutputDto> createGenre(@RequestBody GenreInputDto genreInputDto) {
+    @PostMapping
+    public ResponseEntity<GenreOutputDto> createGenre(@Valid @RequestBody GenreInputDto genreInputDto) {
         GenreOutputDto createdGenre = genreService.createGenre(genreInputDto);
 
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(createdGenre.getId())
+                .toUri();
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(createdGenre);
+        return ResponseEntity.created(location).body(createdGenre);
 
 
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<GenreOutputDto>> getAllGenres() {
-
         List<GenreOutputDto> genres = genreService.getAllGenres();
-
         return ResponseEntity.ok(genres);
 
     }
 
+
     @GetMapping("/{id}")
     public ResponseEntity<GenreOutputDto> getGenreById(@PathVariable Long id) {
-
 
         return ResponseEntity.ok(genreService.getGenreById(id));
     }

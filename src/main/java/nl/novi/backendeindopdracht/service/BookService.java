@@ -46,11 +46,8 @@ public class BookService {
         Genre genre = genreRepository.findById(bookInputDto.genreId)
                 .orElseThrow(() -> new ResourceNotFoundException("Genre not found "));
 
-
         Book book = BookMapper.toEntity(bookInputDto);
         book.setGenre(genre);
-
-
         Book savedBook = bookRepository.save(book);
         return BookMapper.toBookOutputDto(savedBook);
 
