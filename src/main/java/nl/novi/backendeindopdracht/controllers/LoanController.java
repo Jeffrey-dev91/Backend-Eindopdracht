@@ -1,62 +1,51 @@
 package nl.novi.backendeindopdracht.controllers;
 
 
+import jakarta.validation.Valid;
 import nl.novi.backendeindopdracht.dto.LoanInputDto;
 import nl.novi.backendeindopdracht.dto.LoanOutputDto;
 import nl.novi.backendeindopdracht.service.LoanService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/loans")
-
-
-
 public class LoanController {
 
-
-
     private final LoanService loanService;
-
-
-
     public LoanController(LoanService loanService) {
     this.loanService = loanService;
-
     }
 
-
-@PostMapping("/create")
-public ResponseEntity <LoanOutputDto> createLoan(@RequestBody LoanInputDto loanInputDto) {
+@PostMapping
+public ResponseEntity <LoanOutputDto> createLoan(@Valid @RequestBody LoanInputDto loanInputDto) {
 
   LoanOutputDto createdLoan = loanService.createLoan(loanInputDto);
-  return ResponseEntity
-          .status(HttpStatus.CREATED)
-          .body(createdLoan);
 
-}
+    URI uri = URI.create(ServletUriComponentsBuilder
+            .fromCurrentRequest()
+            .path("/{id}")
+            .buildAndExpand(createdLoan.getId())
+            .toUriString());
 
-@GetMapping("/all")
+    return ResponseEntity.created(uri).body(createdLoan);
+    }
+
+@GetMapping
 public ResponseEntity <List <LoanOutputDto>> getAllLoans() {
-
-     List<LoanOutputDto> loans = loanService.getAllLoans();
-     return ResponseEntity.ok(loans);
+     return ResponseEntity.ok(loanService.getAllLoans());
 }
-
-
 
 @GetMapping("/{id}")
     public ResponseEntity <LoanOutputDto> getLoanById(@PathVariable Long id) {
-
-        LoanOutputDto loan = loanService.getLoan(id);
-        return ResponseEntity.ok(loan);
-
-
+        return ResponseEntity.ok(loanService.getLoan(id));
 }
+
 
 @DeleteMapping("/{id}")
  public ResponseEntity <Void> deleteLoan(@PathVariable Long id) {
@@ -66,21 +55,13 @@ public ResponseEntity <List <LoanOutputDto>> getAllLoans() {
 
 
 @PatchMapping("/{id}")
-    public ResponseEntity <LoanOutputDto> updateLoan(@PathVariable Long id, @RequestBody LoanInputDto loan) {
-
-        LoanOutputDto updatedLoan = loanService.updateLoan(id, loan);
-        return ResponseEntity.ok(updatedLoan);
-
-
+    public ResponseEntity <LoanOutputDto> updateLoan(@PathVariable Long id, @Valid @RequestBody LoanInputDto loan) {
+        return ResponseEntity.ok(loanService.updateLoan(id, loan));
 }
 
 
 @PatchMapping("/{id}/return")
     public ResponseEntity <LoanOutputDto> returnLoan(@PathVariable Long id) {
-
-
-        LoanOutputDto result = loanService.returnLoan(id);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(loanService.returnLoan(id));
 }
-
 }
