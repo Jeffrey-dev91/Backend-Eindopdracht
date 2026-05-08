@@ -39,9 +39,7 @@ public class GenreService {
 
     }
 
-
     public List<GenreOutputDto> getAllGenres() {
-
         return genreRepository.findAll()
                 .stream()
                 .map(GenreMapper::toDto)
@@ -49,17 +47,13 @@ public class GenreService {
     }
 
     public GenreOutputDto getGenreById(Long id) {
-
         Genre genre = genreRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Genre met id " + id + "niet gevonden"));
-
         return GenreMapper.toDto(genre);
 
     }
 
-
     public GenreOutputDto updateGenre(Long id, GenreInputDto genreInputDto) {
-
         Genre genre = genreRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Genre met id " + id + "niet gevonden"));
 

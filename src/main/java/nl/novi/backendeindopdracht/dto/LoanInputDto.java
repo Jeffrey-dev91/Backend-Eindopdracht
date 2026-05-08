@@ -8,10 +8,10 @@ import java.time.LocalDate;
 public class LoanInputDto {
 
 
-@NotNull(message = "Book id is verplicht")
+@NotNull(message = "Book id is required")
 public Long bookId;
 
-@NotNull(message = "User id is verplicht")
+@NotNull(message = "User id is required")
 public Long userId;
 
 

@@ -1,6 +1,5 @@
 package nl.novi.backendeindopdracht.service;
 
-
 import nl.novi.backendeindopdracht.dto.BookInputDto;
 import nl.novi.backendeindopdracht.dto.BookOutputDto;
 import nl.novi.backendeindopdracht.exception.BadRequestException;
@@ -18,86 +17,62 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-
 @Service
 public class BookService {
-
 
     private final BookRepository bookRepository;
     private final GenreRepository genreRepository;
     private final GenreService genreService;
     private final Path uploadDir = Paths.get("uploads/books");
 
-
     public BookService(BookRepository bookRepository, GenreRepository genreRepository, GenreService genreService) throws IOException {
-
         this.bookRepository = bookRepository;
         this.genreRepository = genreRepository;
         this.genreService = genreService;
 
         if (!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);
-
         }
-
     }
 
     public BookOutputDto createBook(BookInputDto bookInputDto) {
         Genre genre = genreRepository.findById(bookInputDto.genreId)
-                .orElseThrow(() -> new ResourceNotFoundException("Genre not found "));
+                .orElseThrow(() -> new ResourceNotFoundException("Genre not found with id: " + bookInputDto.genreId));
 
         Book book = BookMapper.toEntity(bookInputDto);
         book.setGenre(genre);
         Book savedBook = bookRepository.save(book);
         return BookMapper.toBookOutputDto(savedBook);
-
-
     }
-
 
     public List<BookOutputDto> getAllBooks() {
         List<Book> books = bookRepository.findAll();
-
-
-        if (books.isEmpty()) {
-            throw new ResourceNotFoundException("No books found in the database");
-        }
 
         return books.stream()
                 .map(BookMapper::toBookOutputDto)
                 .toList();
     }
 
-
     public BookOutputDto getBook(Long id) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book not found "));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
         return BookMapper.toBookOutputDto(book);
-
     }
 
-
     public void deleteBook(Long id) {
-
         if (!bookRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Book is not deleted ");
+            throw new ResourceNotFoundException("Book not found with id: " + id);
         }
-
         bookRepository.deleteById(id);
     }
 
-
     public Book getBookEntity(Long id) {
-
         return bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book not found " + id));
-
-
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
     }
 
     public void uploadBookFile(Long id, MultipartFile file) throws IOException {
         Book book = getBookEntity(id);
-
         if (file.isEmpty()) {
             throw new BadRequestException("File is empty");
         }
@@ -105,7 +80,6 @@ public class BookService {
         String filename = file.getOriginalFilename();
         Path filePath = uploadDir.resolve(filename);
         file.transferTo(filePath);
-
 
         book.setImagePath(filename);
         bookRepository.save(book);
@@ -127,50 +101,28 @@ public class BookService {
     }
 
     public BookOutputDto updateBook(Long id, BookInputDto bookInputDto) {
-
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book not found " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
 
         if (bookInputDto.title != null) {
             book.setTitle(bookInputDto.title);
-
         }
-
         if (bookInputDto.author != null) {
             book.setAuthor(bookInputDto.author);
         }
-
         if (bookInputDto.isbn != null) {
             book.setIsbn(bookInputDto.isbn);
-
         }
-        if (bookInputDto.totalCopies != 0) {
+        if (bookInputDto.totalCopies != null) {
             book.setTotalCopies(bookInputDto.totalCopies);
         }
-
         if (bookInputDto.genreId != 0) {
             Genre genre = genreService.getGenreEntityById(bookInputDto.genreId);
-
             book.setGenre(genre);
         }
 
         Book savedBook = bookRepository.save(book);
 
-        BookOutputDto bookOutputDto = new BookOutputDto();
-        bookOutputDto.setId(savedBook.getId());
-        bookOutputDto.setTitle(savedBook.getTitle());
-        bookOutputDto.setAuthor(savedBook.getAuthor());
-        bookOutputDto.setIsbn(savedBook.getIsbn());
-        bookOutputDto.setTotalCopies(savedBook.getTotalCopies());
-        bookOutputDto.setAvailableCopies(savedBook.getAvailableCopies());
-
-        if (savedBook.getGenre() != null) {
-            bookOutputDto.setGenreName(savedBook.getGenre().getName());
-        }
-
-
-        return bookOutputDto;
-
+        return BookMapper.toBookOutputDto(savedBook);
     }
-
 }

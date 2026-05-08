@@ -22,7 +22,7 @@ public String isbn;
 
 @NotNull(message = "Total Copies is required")
 @Min(value = 1, message = "Total Copies must be at least 1")
-public int totalCopies;
+public Integer totalCopies;
 
 public Long genreId;
 
