@@ -1,14 +1,18 @@
 package nl.novi.backendeindopdracht.service;
 
+import nl.novi.backendeindopdracht.controllers.FileResponseDto;
 import nl.novi.backendeindopdracht.dto.BookInputDto;
 import nl.novi.backendeindopdracht.dto.BookOutputDto;
 import nl.novi.backendeindopdracht.exception.BadRequestException;
+import nl.novi.backendeindopdracht.exception.FileStorageException;
 import nl.novi.backendeindopdracht.exception.ResourceNotFoundException;
 import nl.novi.backendeindopdracht.mapper.BookMapper;
 import nl.novi.backendeindopdracht.models.Book;
 import nl.novi.backendeindopdracht.models.Genre;
 import nl.novi.backendeindopdracht.repository.BookRepository;
 import nl.novi.backendeindopdracht.repository.GenreRepository;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -71,19 +75,43 @@ public class BookService {
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
     }
 
-    public void uploadBookFile(Long id, MultipartFile file) throws IOException {
+
+    public String uploadBookFile(Long id, MultipartFile file) {
         Book book = getBookEntity(id);
         if (file.isEmpty()) {
             throw new BadRequestException("File is empty");
         }
 
-        String filename = file.getOriginalFilename();
-        Path filePath = uploadDir.resolve(filename);
-        file.transferTo(filePath);
+        try {
+            String filename = file.getOriginalFilename();
+            Path filePath = uploadDir.resolve(filename);
+            file.transferTo(filePath);
 
-        book.setImagePath(filename);
-        bookRepository.save(book);
+            book.setImagePath(filename);
+            bookRepository.save(book);
+            return filename;
+        } catch (IOException e) {
+            throw new FileStorageException("Could not store file. Please try again!", e);
+        }
     }
+
+    public FileResponseDto getBookFileAsResource(Long id) {
+        Path filePath = getBookImagePath(id);
+
+
+        try {
+            Resource resource = new UrlResource(filePath.toUri());
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return new FileResponseDto(resource, contentType, resource.getFilename());
+        } catch (IOException e) {
+            throw new FileStorageException("Could not read the file!", e);
+        }
+    }
+
 
     public Path getBookImagePath(Long id) {
         Book book = getBookEntity(id);

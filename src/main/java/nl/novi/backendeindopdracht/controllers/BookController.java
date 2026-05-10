@@ -1,6 +1,5 @@
 package nl.novi.backendeindopdracht.controllers;
 
-
 import jakarta.validation.Valid;
 import nl.novi.backendeindopdracht.dto.BookInputDto;
 import nl.novi.backendeindopdracht.dto.BookOutputDto;
@@ -12,10 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 
@@ -24,7 +20,6 @@ import java.util.List;
 public class BookController {
 
 private final BookService bookService;
-
 
     public BookController(BookService bookService) {
         this.bookService = bookService;
@@ -69,27 +64,22 @@ public ResponseEntity <BookOutputDto> getBookById(@PathVariable Long id) {
 }
 
 
-@PostMapping("/{id}/file")
-public ResponseEntity<String> uploadBookFile(@PathVariable Long id, @RequestParam("file") MultipartFile file) throws IOException {
-        bookService.uploadBookFile(id,file);
-return ResponseEntity.ok("file uploaded successfully" + file.getOriginalFilename());
+    @PostMapping("/{id}/file")
+    public ResponseEntity<String> uploadBookFile(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+
+        String filename = bookService.uploadBookFile(id, file);
+        return ResponseEntity.ok("File uploaded successfully: " + filename);
     }
 
+    @GetMapping("/{id}/file")
+    public ResponseEntity<Resource> getBookFile(@PathVariable Long id) {
+        FileResponseDto fileResponse = bookService.getBookFileAsResource(id);
 
-@GetMapping("/{id}/file")
-public ResponseEntity<Resource> getBookFile(@PathVariable Long id) throws IOException {
-    Path filePath = bookService.getBookImagePath(id);
-    Resource resource = new org.springframework.core.io.UrlResource(filePath.toUri());
-
-    String contentType = Files.probeContentType(filePath);
-    if (contentType == null) contentType = "application/octet-stream";
-
-    return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-            .contentType(MediaType.parseMediaType(contentType))
-            .body(resource);
-}
-
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + fileResponse.getFilename() + "\"")
+                .contentType(MediaType.parseMediaType(fileResponse.getContentType()))
+                .body(fileResponse.getResource());
+    }
 
     @PatchMapping("/{id}")
     public ResponseEntity <BookOutputDto> updateBook(@PathVariable Long id, @RequestBody BookInputDto bookInputDto) {
@@ -97,7 +87,6 @@ public ResponseEntity<Resource> getBookFile(@PathVariable Long id) throws IOExce
         return ResponseEntity.ok(updatedBook);
 
     }
-
 }
 
 
