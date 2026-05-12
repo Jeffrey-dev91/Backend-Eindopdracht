@@ -3,6 +3,7 @@ import nl.novi.backendeindopdracht.dto.ProfileInputDto;
 import nl.novi.backendeindopdracht.dto.ProfileOutputDto;
 import nl.novi.backendeindopdracht.dto.UserInputDto;
 import nl.novi.backendeindopdracht.dto.UserOutputDto;
+import nl.novi.backendeindopdracht.exception.BadRequestException;
 import nl.novi.backendeindopdracht.exception.ResourceNotFoundException;
 import nl.novi.backendeindopdracht.mapper.UserMapper;
 import nl.novi.backendeindopdracht.models.Profile;
@@ -30,8 +31,20 @@ public class UserService {
     }
 
     public UserOutputDto createUser(UserInputDto userInputDto) {
-        User user = UserMapper.toEntity(userInputDto);
 
+
+        if (userRepository.existsByUsername(userInputDto.username)) {
+            throw new BadRequestException("Gebruikersnaam " + userInputDto.username + " is al bezet.");
+        }
+        if (userRepository.existsByEmail(userInputDto.email)) {
+            throw new BadRequestException("E-mail " + userInputDto.email + " is al in gebruik.");
+        }
+
+        if (userInputDto.password == null || userInputDto.password.isEmpty()) {
+            throw new BadRequestException("Wachtwoord is verplicht.");
+        }
+
+        User user = UserMapper.toEntity(userInputDto);
 
         if (userInputDto.roles != null) {
             for (String rolename : userInputDto.roles) {
@@ -44,6 +57,9 @@ public class UserService {
         User savedUser = userRepository.save(user);
         return UserMapper.toOutputDto(savedUser);
     }
+
+
+
 
     public List<UserOutputDto> getAllUsers() {
         return userRepository.findAll()

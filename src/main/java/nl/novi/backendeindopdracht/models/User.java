@@ -1,31 +1,26 @@
 package nl.novi.backendeindopdracht.models;
 
-
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Entity
 @Table(name="users")
 
-
 public class User {
 
   @Id
-
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
 
-  @Column(length=128, nullable=false)
+  @Column(length=128, nullable=false,unique = true)
   private String username;
 
     @Column(length=128, nullable=false)
     private String password;
 
-    @Column(length=128, nullable=false)
+    @Column(length=128, nullable=false,unique = true)
     private String email;
 
 

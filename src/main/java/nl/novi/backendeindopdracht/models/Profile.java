@@ -14,9 +14,13 @@ public class Profile {
     private long id;
 
 
-
+@Column(nullable = false)
     private String firstName;
+
+@Column(nullable = false)
     private String lastName;
+
+@Column(unique = true, nullable = false)
     private String address;
 
 

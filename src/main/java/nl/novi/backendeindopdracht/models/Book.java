@@ -1,8 +1,8 @@
 package nl.novi.backendeindopdracht.models;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import nl.novi.backendeindopdracht.exception.BadRequestException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,26 +17,26 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long id;
 
-//@Column(nullable = true)
+@Column(nullable = true)
 private String imagePath;
 private String filePath;
 private String fileType;
 
 
-//    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String title;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
     private String author;
 
-//    @Column(nullable = true)
+    @Column(unique = true, nullable = false)
     private String isbn;
 
-//    @NotNull(message = "Total Copies is required")
+    @NotNull(message = "Total Copies is required")
     @Column(name = "totalcopies")
     private int totalCopies;
 
-//    @NotNull(message = "Available Copies is required")
+    @NotNull(message = "Available Copies is required")
     @Column(name = "availablecopies")
     private int availableCopies;
 
@@ -72,6 +72,9 @@ public Book(String title, String author, String isbn, int totalCopies){
         return id;
     }
 
+    public List<Loan> getLoans() {
+        return loans;
+    }
 
     public String getTitle() {
         return title;
@@ -126,10 +129,9 @@ public Book(String title, String author, String isbn, int totalCopies){
 
     public void loanOut(){
         if (availableCopies <= 0){
-            throw new IllegalArgumentException("no copies available");
+            throw new BadRequestException("no copies available");
 
         }
-
         this.availableCopies--;
 
     }
