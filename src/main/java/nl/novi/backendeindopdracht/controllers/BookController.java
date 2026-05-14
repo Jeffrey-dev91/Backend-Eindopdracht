@@ -1,5 +1,4 @@
 package nl.novi.backendeindopdracht.controllers;
-
 import jakarta.validation.Valid;
 import nl.novi.backendeindopdracht.dto.BookInputDto;
 import nl.novi.backendeindopdracht.dto.BookOutputDto;
@@ -14,17 +13,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/books")
 public class BookController {
 
-private final BookService bookService;
+    private final BookService bookService;
 
     public BookController(BookService bookService) {
         this.bookService = bookService;
     }
-
 
     @PostMapping
     public ResponseEntity<BookOutputDto> createBook(@Valid @RequestBody BookInputDto bookInputDto) {
@@ -42,31 +39,44 @@ private final BookService bookService;
     }
 
     @GetMapping
-    public ResponseEntity <List<BookOutputDto>>getAllBooks() {
+    public ResponseEntity<List<BookOutputDto>> getBooks(
+            @RequestParam(required = false) Long genreId,
+            @RequestParam(required = false) String genreName,
+            @RequestParam(required = false) String title) {
+
+        if (genreId != null) {
+            List<BookOutputDto> books = bookService.getBooksByGenreId(genreId);
+            return ResponseEntity.ok(books);
+        }
+
+        if (genreName != null && !genreName.isBlank()) {
+            List<BookOutputDto> books = bookService.getBooksByGenreName(genreName);
+            return ResponseEntity.ok(books);
+        }
+
+
+        if (title != null && !title.isBlank()) {
+            List<BookOutputDto> books = bookService.getBooksByTitle(title);
+            return ResponseEntity.ok(books);
+        }
 
         List<BookOutputDto> books = bookService.getAllBooks();
- return ResponseEntity.ok(books);
-
+        return ResponseEntity.ok(books);
     }
 
-
     @GetMapping("/{id}")
-public ResponseEntity <BookOutputDto> getBookById(@PathVariable Long id) {
-
+    public ResponseEntity<BookOutputDto> getBookById(@PathVariable Long id) {
         return ResponseEntity.ok(bookService.getBook(id));
     }
 
-
-@DeleteMapping("/{id}")
-    public ResponseEntity <Void> deleteBook(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();
-}
-
+    }
 
     @PostMapping("/{id}/file")
     public ResponseEntity<String> uploadBookFile(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
-
         String filename = bookService.uploadBookFile(id, file);
         return ResponseEntity.ok("File uploaded successfully: " + filename);
     }
@@ -82,22 +92,8 @@ public ResponseEntity <BookOutputDto> getBookById(@PathVariable Long id) {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity <BookOutputDto> updateBook(@PathVariable Long id, @RequestBody BookInputDto bookInputDto) {
-        BookOutputDto updatedBook = bookService.updateBook(id,bookInputDto);
+    public ResponseEntity<BookOutputDto> updateBook(@PathVariable Long id, @Valid @RequestBody BookInputDto bookInputDto) {
+        BookOutputDto updatedBook = bookService.updateBook(id, bookInputDto);
         return ResponseEntity.ok(updatedBook);
-
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

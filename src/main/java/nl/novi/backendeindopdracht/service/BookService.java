@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookService {
@@ -74,7 +75,6 @@ public class BookService {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found with id: " + id));
     }
-
 
     public String uploadBookFile(Long id, MultipartFile file) {
         Book book = getBookEntity(id);
@@ -152,5 +152,27 @@ public class BookService {
         Book savedBook = bookRepository.save(book);
 
         return BookMapper.toBookOutputDto(savedBook);
+    }
+
+
+    public List<BookOutputDto> getBooksByGenreId(Long genreId) {
+        List<Book> books = bookRepository.findByGenreId(genreId);
+        return books.stream()
+                .map(BookMapper::toBookOutputDto)
+                .toList();
+    }
+
+    public List<BookOutputDto> getBooksByGenreName(String genre) {
+        List<Book> books = bookRepository.findByGenreName(genre);
+        return books.stream()
+                .map(BookMapper::toBookOutputDto)
+                .toList();
+    }
+
+    public List<BookOutputDto> getBooksByTitle(String title) {
+        List<Book> books = bookRepository.findByTitle(title);
+        return books.stream()
+                .map(BookMapper::toBookOutputDto)
+                .toList();
     }
 }
