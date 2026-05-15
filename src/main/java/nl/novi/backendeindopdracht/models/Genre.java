@@ -29,6 +29,9 @@ private List<Book> books = new ArrayList<>();
 
 public Genre() {}
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public long getId() {
         return id;

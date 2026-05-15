@@ -168,4 +168,8 @@ public Book(String title, String author, String isbn, int totalCopies){
     public void setFileType(String fileType) {
         this.fileType = fileType;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
